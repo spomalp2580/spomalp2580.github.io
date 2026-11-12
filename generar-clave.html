@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Generar usuario · Laboratorio VR</title>
+<meta name="robots" content="noindex">
+<style>
+  body { margin: 0; background: #121b26; color: #eef3f8; font-family: system-ui, sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 48px 28px; }
+  h1 { font-size: 1.9rem; margin: 0 0 8px; }
+  p { color: #9fb0c2; font-size: 1.05rem; line-height: 1.5; }
+  label { display: block; font-weight: 600; margin: 20px 0 8px; }
+  input { width: 100%; box-sizing: border-box; min-height: 52px; padding: 0 16px; font-size: 1.15rem;
+    color: #eef3f8; background: #0f1720; border: 2px solid #34485e; border-radius: 12px; }
+  button { margin-top: 24px; min-height: 52px; padding: 0 24px; font-size: 1.1rem; font-weight: 600;
+    border: 0; border-radius: 12px; background: #5aa9ff; color: #08121d; cursor: pointer; }
+  pre { margin-top: 24px; padding: 18px; background: #0f1720; border-radius: 12px; white-space: pre-wrap;
+    word-break: break-all; font-size: 1rem; border: 2px solid #34485e; min-height: 1.5em; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Generar línea de usuario</h1>
+  <p>Escribe el usuario y la contraseña. Copia la línea que aparece y pégala dentro de
+     <code>window.USUARIOS = { … }</code> en <code>usuarios.js</code>. Esta página no guarda ni envía nada.</p>
+  <label for="u">Usuario</label>
+  <input id="u" autocapitalize="none" spellcheck="false">
+  <label for="c">Contraseña</label>
+  <input id="c" type="text" spellcheck="false">
+  <button id="g">Generar</button>
+  <pre id="out"></pre>
+</main>
+<script>
+document.getElementById("g").onclick = async () => {
+  const u = document.getElementById("u").value.trim().toLowerCase();
+  const c = document.getElementById("c").value;
+  const out = document.getElementById("out");
+  if (!u || !c) { out.textContent = "Escribe usuario y contraseña."; return; }
+  const h = await crypto.subtle.digest("SHA-256", new TextEncoder().encode("labvr|" + u + "|" + c));
+  const hex = [...new Uint8Array(h)].map(b => b.toString(16).padStart(2, "0")).join("");
+  out.textContent = `  "${u}": "${hex}",`;
+};
+</script>
+</body>
+</html>
